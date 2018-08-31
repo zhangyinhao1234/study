@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: spring-boot-mybatis-demo
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/dump20161027?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+  druid:
+    initialSize: 1
+    minIdle: 1
+    maxActive: 20
+    testOnBorrow: true
+
+server:
+  port: 9033
+  tomcat:
+    max-http-header-size: 102400
+  maxHttpHeaderSize: 10240000
+
+
+management.security.enabled: false
+
+logging:
+    level:
+        tk.mybatis: TRACE
+
+mybatis:
+    type-aliases-package: com.github.zhangyinhao1234.study.springboot.pojo
+    type-aliases-super-type: com.github.zhangyinhao1234.study.springboot.base.IdEntity
+    mapper-locations: classpath*:mapper/*.xml
+    table:
+      auto: update
+    model:
+      pack: com.github.zhangyinhao1234.study.springboot.pojo
+    database:
+      type: mysql
+
+mapper:
+    mappers:
+        - com.github.zhangyinhao1234.study.springboot.base.BaseMapper
+    not-empty: false
+    identity: MYSQL
+
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
