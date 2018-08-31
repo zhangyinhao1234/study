@@ -48,3 +48,9 @@ pagehelper:
     supportMethodsArguments: true
     params: count=countSql
 
+
+#bingpo-spring-boot-starter-hello
+example:
+  service:
+    name: zhangsan
+    age: 21
