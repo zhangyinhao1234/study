@@ -16,4 +16,5 @@ public interface UserMapper extends BaseMapper<UserExample> {
      * @throws Exception
      */
     List<UserExample> selectAllUser();
+
 }
