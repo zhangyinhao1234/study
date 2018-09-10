@@ -112,6 +112,7 @@
 		</dependency>
 
 
+
 		<dependency>
 			<groupId>com.github.zhangyinhao1234.study</groupId>
 			<artifactId>bingpo-spring-boot-starter-hello</artifactId>
