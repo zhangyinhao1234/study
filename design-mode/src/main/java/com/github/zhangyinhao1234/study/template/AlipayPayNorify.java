@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author zhang 2018年10月5日 下午1:30:24
  */
 public class AlipayPayNorify extends AbstractPayNotifyBusiness {
+    
+    
+    
+    
     @Override
     public boolean checkNotifyParams(HttpServletRequest request) {
         System.out.println("。。。支付宝签名验证。。。。");

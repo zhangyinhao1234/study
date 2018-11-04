@@ -8,24 +8,22 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author zhang 2018年10月5日 下午1:24:14
  */
-public abstract class AbstractPayNotifyBusiness extends AbstractPayNotify {
+public abstract class AbstractPayNotifyBusiness 
+    extends AbstractPayNotify {
 
     @Override
     public void updateOrderAfterPay(OrderRequest order) {
         System.out.println("。。。更新订单状态等操作。。。。");
-
     }
 
     @Override
     public void saveOrderLogsAfterPaySuccess(OrderRequest order) {
         System.out.println("。。。保存支付完成的订单日志。。。。");
-
     }
 
     @Override
     public void handlerAfterPay(OrderRequest order) {
         System.out.println("。。。订单处理完成消息推送等。。。。");
-
     }
 
     @Override
