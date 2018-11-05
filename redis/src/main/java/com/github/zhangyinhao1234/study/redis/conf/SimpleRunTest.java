@@ -1,5 +1,6 @@
 package com.github.zhangyinhao1234.study.redis.conf;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,7 +12,12 @@ import java.util.concurrent.Future;
 
 import redis.clients.jedis.Jedis;
 
+class ThreadMain{
+    public static ExecutorService thread = Executors.newFixedThreadPool(20);
+}
+
 public class SimpleRunTest {
+
     private String sku1Key = "sku1";
     private String sku2Key = "sku2";
     private String sku3Key = "sku3";
@@ -21,30 +27,26 @@ public class SimpleRunTest {
     private Integer compV = 10;
 
     private String lockKey = "skutaskId";
-    
-    ExecutorService thread = Executors.newFixedThreadPool(20);
 
     public static void main(String[] args) {
 //        test1();
-        
-        testCallAble();
 
+//        testCallAble();
+
+        //多线程并发减库存
+        testRunAble();
     }
-    
+
     /**
-     * 
      * 多线程扣库存
-     *
      */
     public static void testCallAble() {
-        SimpleRunTest simpleRunTest = new SimpleRunTest();
-        simpleRunTest.init();
-
+        SimpleRunTest simpleRunTest = getSimpleRunTest();
         long currentTimeMillis = System.currentTimeMillis();
         for (int i = 0; i < 1000; i++) {
             Jedis jedis = RedisUtil.getJedis();
             simpleRunTest.lock(jedis);
-            
+
 //            List<Future<Boolean>> futureList = new ArrayList<Future<Boolean>>();
 //            for(int j=0;j<4;j++) {
 //                Future<Boolean> submit = 
@@ -63,10 +65,10 @@ public class SimpleRunTest {
 //                }
 //            }
 //            
-            
+
             simpleRunTest.comAllSku(jedis);
             simpleRunTest.decrAllSku(jedis);
-            
+
             simpleRunTest.unLock(jedis);
             RedisUtil.release(jedis);
         }
@@ -74,17 +76,12 @@ public class SimpleRunTest {
 
     }
 
-    
 
     /**
-     * 
      * 单线程
-     *
      */
     public static void test1() {
-        SimpleRunTest simpleRunTest = new SimpleRunTest();
-        simpleRunTest.init();
-
+        SimpleRunTest simpleRunTest = getSimpleRunTest();
         long currentTimeMillis = System.currentTimeMillis();
         for (int i = 0; i < 1000; i++) {
             Jedis jedis = RedisUtil.getJedis();
@@ -98,44 +95,67 @@ public class SimpleRunTest {
 
     }
 
-    private void lock(Jedis jedis) {
+
+    public static void testRunAble() {
+        getSimpleRunTest();//init
+        long currentTimeMillis = System.currentTimeMillis();
+        for (int i = 0; i < 1000; i++) {
+            ThreadMain.thread.execute(new RedisRunAble(new SimpleRunTest()));
+        }
+
+        try {
+//            ThreadMain.thread.shutdown();
+            System.out.println(System.currentTimeMillis() - currentTimeMillis);
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static SimpleRunTest getSimpleRunTest() {
+        SimpleRunTest simpleRunTest = new SimpleRunTest();
+        simpleRunTest.init();
+        return simpleRunTest;
+    }
+
+    public void lock(Jedis jedis) {
         String string = "";
         while (!doLock(jedis, string)) {
-            // System.out.println("---");
+//             System.out.println("wait...");
         }
         return;
     }
 
-    private boolean doLock(Jedis jedis, String uuid) {
+    public boolean doLock(Jedis jedis, String uuid) {
         String set = jedis.set(lockKey, uuid, "NX", "PX", 3000);
         return "OK".equals(set);
 
     }
 
-    private void unLock(Jedis jedis) {
+    public void unLock(Jedis jedis) {
         jedis.del(lockKey);
     }
 
-    private void comAllSku(Jedis jedis) {
+    public void comAllSku(Jedis jedis) {
         comp(jedis, sku1Key);
         comp(jedis, sku2Key);
         comp(jedis, sku3Key);
         comp(jedis, sku4Key);
     }
 
-    private void decrAllSku(Jedis jedis) {
+    public void decrAllSku(Jedis jedis) {
         decrBy(jedis, sku1Key);
         decrBy(jedis, sku2Key);
         decrBy(jedis, sku3Key);
         decrBy(jedis, sku4Key);
     }
 
-    private boolean comp(Jedis jedis, String skukey) {
+    public boolean comp(Jedis jedis, String skukey) {
         String val = jedis.get(skukey);
         return (Integer.valueOf(val) > this.compV) ? true : false;
     }
 
-    private void decrBy(Jedis jedis, String skukey) {
+    public void decrBy(Jedis jedis, String skukey) {
         jedis.decrBy(skukey, Long.valueOf(compV));
     }
 
@@ -150,7 +170,6 @@ public class SimpleRunTest {
 }
 
 /**
- * 
  * 比较线程
  *
  * @author zhang 2018年11月4日 下午8:49:16
@@ -179,7 +198,6 @@ class RedisComCallBack implements Callable<Boolean> {
 }
 
 /**
- * 
  * 减库存线程
  *
  * @author zhang 2018年11月4日 下午8:52:04
@@ -205,4 +223,25 @@ class RedisdecrCallBack implements Callable<Boolean> {
         jedis.decrBy(key, Long.valueOf(compV));
     }
 
+}
+
+/**
+ * 线程处理数据
+ */
+class RedisRunAble extends Thread {
+    private SimpleRunTest simpleRunTest;
+    public RedisRunAble(SimpleRunTest simpleRunTest) {
+        this.simpleRunTest = simpleRunTest;
+    }
+    @Override
+    public void run() {
+        Jedis jedis = RedisUtil.getJedis();
+        simpleRunTest.lock(jedis);
+        simpleRunTest.comAllSku(jedis);
+        simpleRunTest.decrAllSku(jedis);
+        simpleRunTest.unLock(jedis);
+        RedisUtil.release(jedis);
+
+//        System.out.println("------");
+    }
 }
