@@ -29,6 +29,9 @@ public class SimpleRunTest {
 
     private String lockKey = "skutaskId";
     String luaScript = " if redis.call('get',KEYS[1]) >= ARGV[1] then return redis.call('decrby',KEYS[1],ARGV[1]) else return -1 end ";
+
+
+
     public static void main(String[] args) {
 //        test1();
 
