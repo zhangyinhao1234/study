@@ -23,7 +23,7 @@ public class RedisConfig {
 
     private static void initJedisPool() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxIdle(20);
+        poolConfig.setMaxIdle(200);
         poolConfig.setMaxTotal(200);
         synchronized (hi) {
             if ("".equals(RedisConfig.password) || RedisConfig.password == null) {

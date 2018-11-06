@@ -2,6 +2,7 @@ package com.github.zhangyinhao1234.study.redis.conf;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -13,7 +14,7 @@ import java.util.concurrent.Future;
 import redis.clients.jedis.Jedis;
 
 class ThreadMain{
-    public static ExecutorService thread = Executors.newFixedThreadPool(20);
+    public static ExecutorService thread = Executors.newFixedThreadPool(100);
 }
 
 public class SimpleRunTest {
@@ -27,7 +28,7 @@ public class SimpleRunTest {
     private Integer compV = 10;
 
     private String lockKey = "skutaskId";
-
+    String luaScript = " if redis.call('get',KEYS[1]) >= ARGV[1] then return redis.call('decrby',KEYS[1],ARGV[1]) else return -1 end ";
     public static void main(String[] args) {
 //        test1();
 
@@ -43,7 +44,7 @@ public class SimpleRunTest {
     public static void testCallAble() {
         SimpleRunTest simpleRunTest = getSimpleRunTest();
         long currentTimeMillis = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100000; i++) {
             Jedis jedis = RedisUtil.getJedis();
             simpleRunTest.lock(jedis);
 
@@ -99,7 +100,7 @@ public class SimpleRunTest {
     public static void testRunAble() {
         getSimpleRunTest();//init
         long currentTimeMillis = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100000; i++) {
             ThreadMain.thread.execute(new RedisRunAble(new SimpleRunTest()));
         }
 
@@ -153,6 +154,25 @@ public class SimpleRunTest {
     public boolean comp(Jedis jedis, String skukey) {
         String val = jedis.get(skukey);
         return (Integer.valueOf(val) > this.compV) ? true : false;
+    }
+
+
+    public void decrAllSkuUseLua(Jedis jedis) {
+        decrbyCountUseLua(jedis, sku1Key);
+        decrbyCountUseLua(jedis, sku2Key);
+        decrbyCountUseLua(jedis, sku3Key);
+        decrbyCountUseLua(jedis, sku4Key);
+    }
+
+    /**
+     * Lua脚本进行CAS原子性操作
+     * @param jedis
+     * @param skukey
+     * @return
+     */
+    public boolean decrbyCountUseLua(Jedis jedis, String skukey) {
+        Object eval = jedis.eval(luaScript, Arrays.asList(skukey), Arrays.asList(this.compV.toString()));
+        return (Integer.valueOf(eval.toString()) > 0);
     }
 
     public void decrBy(Jedis jedis, String skukey) {
@@ -236,12 +256,7 @@ class RedisRunAble extends Thread {
     @Override
     public void run() {
         Jedis jedis = RedisUtil.getJedis();
-        simpleRunTest.lock(jedis);
-        simpleRunTest.comAllSku(jedis);
-        simpleRunTest.decrAllSku(jedis);
-        simpleRunTest.unLock(jedis);
+        simpleRunTest.decrAllSkuUseLua(jedis);
         RedisUtil.release(jedis);
-
-//        System.out.println("------");
     }
 }
