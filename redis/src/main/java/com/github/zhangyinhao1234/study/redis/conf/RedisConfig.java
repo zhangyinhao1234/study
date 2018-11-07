@@ -15,17 +15,18 @@ public class RedisConfig {
     private static int port = 6379;
 
     public static JedisPool getPool() {
-        if (jedisPool == null) {
-            initJedisPool();
-        }
+        initJedisPool();
         return jedisPool;
     }
 
     private static void initJedisPool() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxIdle(200);
-        poolConfig.setMaxTotal(200);
+        poolConfig.setMaxIdle(2000);
+        poolConfig.setMaxTotal(2000);
         synchronized (hi) {
+            if (jedisPool != null) {
+                return;
+            }
             if ("".equals(RedisConfig.password) || RedisConfig.password == null) {
                 jedisPool = new JedisPool(poolConfig, RedisConfig.host, RedisConfig.port);
             } else {

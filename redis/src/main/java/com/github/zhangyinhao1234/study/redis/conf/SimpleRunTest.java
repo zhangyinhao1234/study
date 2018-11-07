@@ -13,23 +13,34 @@ import java.util.concurrent.Future;
 
 import redis.clients.jedis.Jedis;
 
-class ThreadMain{
-    public static ExecutorService thread = Executors.newFixedThreadPool(100);
+class ThreadMain {
+    public static ExecutorService thread = Executors.newFixedThreadPool(500);
 }
 
 public class SimpleRunTest {
 
-    private String sku1Key = "sku1";
-    private String sku2Key = "sku2";
-    private String sku3Key = "sku3";
-    private String sku4Key = "sku4";
+    private String sku1Key = "sku_1";
+    private String sku2Key = "sku_2";
+    private String sku3Key = "sku_3";
+    private String sku4Key = "sku_4";
     private String count = "1000000";
 
-    private Integer compV = 10;
+    private Integer compV = 1;
 
     private String lockKey = "skutaskId";
     String luaScript = " if redis.call('get',KEYS[1]) >= ARGV[1] then return redis.call('decrby',KEYS[1],ARGV[1]) else return -1 end ";
 
+    String script = "local b = 1 " +
+            " local n = table.getn(KEYS) " +
+            " for i=1,n,1 do " +
+            " if redis.call('get',KEYS[i]) >= ARGV[i] then  else b=0 break end " +
+            " end " +
+            " if(b>0) then " +
+            " for i=1,n,1 do " +
+            " redis.call('decrby',KEYS[i],ARGV[i]) " +
+            " end" +
+            " end " +
+            " return b ";
 
 
     public static void main(String[] args) {
@@ -161,20 +172,17 @@ public class SimpleRunTest {
 
 
     public void decrAllSkuUseLua(Jedis jedis) {
-        decrbyCountUseLua(jedis, sku1Key);
-        decrbyCountUseLua(jedis, sku2Key);
-        decrbyCountUseLua(jedis, sku3Key);
-        decrbyCountUseLua(jedis, sku4Key);
+        decrbyCountUseLua(jedis);
     }
 
     /**
      * Lua脚本进行CAS原子性操作
+     *
      * @param jedis
-     * @param skukey
      * @return
      */
-    public boolean decrbyCountUseLua(Jedis jedis, String skukey) {
-        Object eval = jedis.eval(luaScript, Arrays.asList(skukey), Arrays.asList(this.compV.toString()));
+    public boolean decrbyCountUseLua(Jedis jedis) {
+        Object eval = jedis.eval(script, Arrays.asList(sku1Key, sku2Key, sku3Key, sku4Key), Arrays.asList("10", compV.toString(), compV.toString(), compV.toString()));
         return (Integer.valueOf(eval.toString()) > 0);
     }
 
@@ -253,9 +261,11 @@ class RedisdecrCallBack implements Callable<Boolean> {
  */
 class RedisRunAble extends Thread {
     private SimpleRunTest simpleRunTest;
+
     public RedisRunAble(SimpleRunTest simpleRunTest) {
         this.simpleRunTest = simpleRunTest;
     }
+
     @Override
     public void run() {
         Jedis jedis = RedisUtil.getJedis();

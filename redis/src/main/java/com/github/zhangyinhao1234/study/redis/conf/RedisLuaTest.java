@@ -17,7 +17,9 @@ public class RedisLuaTest {
 //        test1del();
 //        test1decr();
 //        testLuaFor();
-        testLuaFor2();
+//        testLuaFor2();
+        testLuaFor3();
+
     }
 
     public static void test1del(){
@@ -53,6 +55,19 @@ public class RedisLuaTest {
         System.out.println(eval);
     }
 
+    static String  script = "local b = 1 " +
+            " local n = table.getn(KEYS) " +
+            " for i=1,n,1 do " +
+            " if redis.call('get',KEYS[i]) >= ARGV[i] then b=1 else b=0 break  end " +
+            " end " +
+            " if(b>0) then " +
+            " for i=1,n,1 do " +
+            " redis.call('decrby',KEYS[i],ARGV[i]) " +
+            " end return 1 else return 0 " +
+            " end ";
+
+
+
 
     /**
      * 减库存lua脚本，支持多sku
@@ -61,23 +76,39 @@ public class RedisLuaTest {
         Jedis jedis = RedisUtil.getJedis();
         String key1 = "test2";
         String key2 = "test3";
-        String decyCount = "20";
+        String decyCount = "10";
         jedis.set(key1,"10");
         jedis.set(key2,"100");
 
-        String script = "local b = 1 " +
-                " local n = table.getn(KEYS) " +
-                " for i=1,n,1 do " +
-                " if redis.call('get',KEYS[i]) >= ARGV[i] then  else b=0 break end " +
-                " end " +
-                " if(b>0) then " +
-                " for i=1,n,1 do " +
-                " redis.call('decrby',KEYS[i],ARGV[i]) " +
-                " end" +
-                " end " +
-                " return b ";
+
 
         Object eval = jedis.eval(script,Arrays.asList(key1,key2), Arrays.asList(decyCount,decyCount));
         System.out.println(eval);
+    }
+    static private String sku1Key = "sku_1";
+    static private String sku2Key = "sku_2";
+    static private String sku3Key = "sku_3";
+    static private String sku4Key = "sku_4";
+    static private String c="10";
+
+    /**
+     * 支持多sku的库存扣减
+     */
+    public static void testLuaFor3(){
+        Jedis jedis = RedisUtil.getJedis();
+        Integer count1 = 90000;
+        Integer count2 = 9000;
+
+        //初始化库存
+//        jedis.del(sku1Key,sku2Key,sku3Key,sku4Key);
+//        jedis.incrBy(sku1Key,count2);
+//        jedis.incrBy(sku2Key,count2);
+//        jedis.incrBy(sku3Key,count1);
+//        jedis.incrBy(sku4Key,count1);
+
+        //扣库存 1成功，0某个商品存不足
+        Object eval = jedis.eval(script, Arrays.asList(sku1Key, sku2Key,sku3Key,sku4Key), Arrays.asList(c, c,"100","2000"));
+        RedisUtil.release(jedis);
+        System.out.println(eval.toString());
     }
 }
