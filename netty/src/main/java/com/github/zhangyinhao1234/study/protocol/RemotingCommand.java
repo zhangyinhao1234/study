@@ -1,10 +1,12 @@
 package com.github.zhangyinhao1234.study.protocol;
 
+import java.io.Serializable;
+
 /**
  * @author 【张殷豪】
  * Date 2019/6/2 15:04
  */
-public class RemotingCommand {
+public class RemotingCommand implements Serializable {
     String uid;
 
     private transient byte[] body;
@@ -24,4 +26,7 @@ public class RemotingCommand {
     public void setBody(byte[] body) {
         this.body = body;
     }
+
+
+
 }

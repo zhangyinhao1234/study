@@ -53,6 +53,7 @@ public class HelloClientStarup {
                         logger.debug("想服务器发送消息："+line+"结果：成功");
                     else
                         logger.debug("想服务器发送消息："+line+"结果：失败");
+                        future.cause().printStackTrace();
                 }
             });
 
