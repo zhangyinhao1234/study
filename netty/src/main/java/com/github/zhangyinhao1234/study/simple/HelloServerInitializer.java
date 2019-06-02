@@ -14,6 +14,11 @@ import org.slf4j.LoggerFactory;
 public class HelloServerInitializer extends ChannelInitializer<SocketChannel> {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 有客户顿连接上来的时候会触发
+     * @param ch
+     * @throws Exception
+     */
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         //添加一个处理起
