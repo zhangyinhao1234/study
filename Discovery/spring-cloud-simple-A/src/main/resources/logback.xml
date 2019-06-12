@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- 	<include resource="org/springframework/boot/logging/logback/base.xml" /> -->
+    <contextName>logback</contextName>
+    <!-- 记录文件到特定目录 -->
+    <!-- <property name="log.path" value="E:\\test\\logback.log" /> -->
+    <property name="log.path" value="C:/var/taocaimall/logs/info/logback.log"/>
+
+
+    <!--输出到控制台 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- <filter class="ch.qos.logback.classic.filter.ThresholdFilter"> <level>ERROR</level>
+            </filter> -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36}- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="info">
+        <appender-ref ref="console"/>
+    </root>
+
+    <logger name="org.binpo" level="debug" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+
+</configuration>
