@@ -15,7 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mysql-connector-java.version>5.1.35</mysql-connector-java.version>
 		<mybatis.version>3.4.6</mybatis.version>
-		<fastjson.version>1.2.4</fastjson.version>
+		<fastjson.version>1.2.25</fastjson.version>
 	</properties>
 
 	<dependencies>
