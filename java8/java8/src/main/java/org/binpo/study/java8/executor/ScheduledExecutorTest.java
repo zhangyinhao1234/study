@@ -15,7 +15,8 @@ public class ScheduledExecutorTest {
 
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
-                ScheduledExecutorTest scheduledExecutorTest = new ScheduledExecutorTest();
+
+        ScheduledExecutorTest scheduledExecutorTest = new ScheduledExecutorTest();
         scheduledExecutorTest.service.scheduleAtFixedRate(new Runnable() {
 
 			@Override
