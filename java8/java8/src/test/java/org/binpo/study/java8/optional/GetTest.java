@@ -93,7 +93,6 @@ public class GetTest {
     public List<Order> test2() {
         //DB query
         RequestModule user = RequestModule.getRequest("zhagsan", null);
-        user.setOrderList(Stream.of(new Order("123", new BigDecimal("23.00"))).collect(Collectors.toList()));
         return Optional.ofNullable(user).map(u -> u.getOrderList()).orElse(new ArrayList<>());
     }
 
