@@ -22,7 +22,7 @@ public class CyclicBarrierTest {
             }
         });
         for(int i =0;i<n;i++){
-            new PrintThread(test).start();
+            new PrintThread(test,i).start();
         }
 
     }
@@ -30,19 +30,25 @@ public class CyclicBarrierTest {
 
     static class PrintThread extends Thread{
         CyclicBarrier test;
-        public PrintThread(CyclicBarrier test) {
+        int i;
+        public PrintThread(CyclicBarrier test,int i) {
             this.test = test;
+            this.i = i;
         }
 
         @Override
         public void run() {
-            System.out.println("开始准备工作"+new Date());
+            System.out.println("Thread: "+i+" 开始准备工作"+new Date());
             try {
-                Thread.sleep(3000);
+                if (i == 3){
+                    Thread.sleep(6000);
+                }else{
+                    Thread.sleep(3000);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("准备工作结束。。。。。"+new Date());
+            System.out.println("Thread: "+i+" 准备工作结束。。。。。"+new Date());
             try {
                 test.await();
             } catch (InterruptedException e) {
@@ -51,7 +57,7 @@ public class CyclicBarrierTest {
                 e.printStackTrace();
             }
 
-            System.out.println("所有线程准备工作完成，继续执行相关工作.......");
+            System.out.println("Thread: "+i+ " 所有线程准备工作完成，继续执行相关工作.......");
 
         }
     }
