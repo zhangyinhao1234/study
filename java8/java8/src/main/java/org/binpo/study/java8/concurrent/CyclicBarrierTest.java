@@ -14,7 +14,13 @@ public class CyclicBarrierTest {
 
     public static void main(String[] args) {
         int n = 4;
-        CyclicBarrier test = new CyclicBarrier(n);
+        CyclicBarrier test = new CyclicBarrier(n, new Runnable() {
+            @Override
+            public void run() {
+                //所有子线程的准备工作完成后会调用这个方法
+                System.out.println("子线程处理完工作后可以执行一些额外的工作。。。。。");
+            }
+        });
         for(int i =0;i<n;i++){
             new PrintThread(test).start();
         }
