@@ -23,16 +23,16 @@ public class SynchronousQueueTest {
 //        new Thread(new WriteThread(queue)).start();
 //
 
-        TimeUnit.SECONDS.sleep(20);
+//        TimeUnit.SECONDS.sleep(20);
 
-        for(int i = 0;i<50;i++){
+        for(int i = 0;i<1;i++){
             executorService.submit(new WriteThread(queue));
         }
 
 
-        TimeUnit.SECONDS.sleep(10);
-        for(int i =0;i<3;i++){
-            new Thread(new ReadThread(queue,"0")).start();
+//        TimeUnit.SECONDS.sleep(10);
+        for(int i =0;i<2;i++){
+            new Thread(new ReadThread(queue,i + "")).start();
         }
 
 
@@ -48,7 +48,7 @@ public class SynchronousQueueTest {
         @Override
         public void run() {
 
-//            while (true){
+            while (true){
                 String anInt = UUID.randomUUID().toString();
                 try {
                     TimeUnit.SECONDS.sleep(1);
@@ -62,7 +62,7 @@ public class SynchronousQueueTest {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-//            }
+            }
         }
     }
 
@@ -77,13 +77,17 @@ public class SynchronousQueueTest {
             this.threadName = threadName;
         }
 
+        private int tt(int j){
+            return j*j;
+        }
+
         @Override
         public void run() {
             while (true){
                 try {
-                    if(!threadName.equals("0")){
+//                    if(!threadName.equals("0")){
                         TimeUnit.SECONDS.sleep(2);
-                    }
+//                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -91,6 +95,7 @@ public class SynchronousQueueTest {
                     String take = queue.take();
                     String ss = "线程"+this.threadName+"  :  读取消息："+ take ;
                     System.out.println(ss);
+                    System.out.println(tt(new Random().nextInt(100)));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
