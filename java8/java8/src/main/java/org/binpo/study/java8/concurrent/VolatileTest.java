@@ -21,8 +21,8 @@ public class VolatileTest {
 //        new Thread(new ReadThread(test,"2")).start();
 
 
-        // Integer 是地址地址传递，但是在Integer 中value属性是final，所以每次进行加减擦操作的时候其实是创建了一个新的Integer，并且修改了内存地址指向
-        //就会造成，我直接在在多线程中传递Integer的时候，即使设置为  volatile ，其他线程也是不可见，因为早已经不是以前的地址了
+        // Integer 是地址地址传递，但是在Integer 中value属性是final，所以每次进行加减擦操作的时候其实是创建了一个新的Integer，
+        // 而方法上入参的Integer是不可变的，所以他的生命周期也只在方法内部，出了这个方法，就会被销毁，而和原来的Integer也没有关系了
         new Thread(new WriteThread2(test.c)).start();
         new Thread(new ReadThread2(test.c)).start();
 
