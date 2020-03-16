@@ -1,0 +1,36 @@
+package rules
+
+import com.github.zhangyinhao1234.study.drools.PointParams
+
+rule "hello"
+    no-loop true
+    lock-on-active true
+    salience 1
+    when
+        $s : PointParams(point > 0)
+    then
+        $s.setPoint(100);
+        update($s);
+end
+
+rule "add"
+    no-loop true
+    lock-on-active true
+    salience 1
+    when
+        $s : PointParams(checkCount < 5)
+    then
+        $s.setPoint($s.getCheckCount() * 5);
+        update($s);
+end
+
+rule "addddd"
+    no-loop true
+    lock-on-active true
+    salience 1
+    when
+        $s : PointParams(checkCount > 4)
+    then
+        $s.setPoint(20);
+        update($s);
+end
