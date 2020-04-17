@@ -21,18 +21,42 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm-tree</artifactId>
+      <version>7.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm-commons</artifactId>
+      <version>7.1</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.25.0-GA</version>
+    </dependency>
+
+
+
   </dependencies>
 
   <build>
     <plugins>
+
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-          </execution>
-        </executions>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.5.5</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -42,9 +66,26 @@
               <Pinpoint-Version>${project.version}</Pinpoint-Version>
               <Boot-Class-Path>${project.build.finalName}.jar</Boot-Class-Path>
             </manifestEntries>
+
+            <manifest>
+              <mainClass>com.github.zhangyinhao1234.study.agent.TransformerBoot</mainClass>
+            </manifest>
           </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>6</source>
+          <target>6</target>
+        </configuration>
+      </plugin>
+
+
     </plugins>
   </build>
 </project>
