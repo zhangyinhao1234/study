@@ -1,5 +1,6 @@
 package com.github.zhangyinhao1234.javassist;
 
+import com.github.zhangyinhao1234.asm.Util;
 import javassist.*;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class JavassistMethod {
         CtMethod ctMethod = ctClass.getDeclaredMethod("hi");
         ctMethod.insertBefore("com.github.zhangyinhao1234.asm.Interceptor interceptor = com.github.zhangyinhao1234.asm.InterceptorFactory.getInterceptor(1);");
         byte[] bytes = ctClass.toBytecode();
+        Util.saveclass(bytes);
         System.out.println("JavassistMethod....进行增强完成");
         return bytes;
 

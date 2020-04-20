@@ -22,7 +22,7 @@ public class InstallShadowSocks {
     public static void main(String[] args) {
 //        FIELD_OWNER = args[1].substring(0, args[1].length() - 6);
         // 其中arg[0]是源字节码文件，args[1]是目标字节码文件
-        String src="/Users/yinhao.zhang/工作文档/developFolder/GitDataSource/mystudy/study/agent/target/test-classes/com/github/zhangyinhao1234/study/agent/LinuxService.class";
+        String src="/Users/yinhao.zhang/工作文档/developFolder/GitDataSource/mystudy/study/agent/target/test-classes/com/github/zhangyinhao1234/test/HelloWord.class";
         String dst="/Users/yinhao.zhang/soft/"+ UUID.randomUUID() +".class";
         installShadowSocks(src, dst);
     }
@@ -50,7 +50,7 @@ public class InstallShadowSocks {
                 if (methodNode.name.equals("<init>")) {
                     // 构造器中对ShadowSocks属性进行初始化
                     initShadowSocksField(methodNode);
-                } else if (methodNode.name.equals("searchByGoogle")) {
+                } else if (methodNode.name.equals("hi")) {
                     // searchByGoogle方法中添加ShadowSocks的调用
                     addShadowSocksExecute(methodNode);
                 }
@@ -146,15 +146,16 @@ public class InstallShadowSocks {
         String desc="Lcom/github/zhangyinhao1234/asm/Interceptor;";
 
 
-        final LocalVariableNode node = new LocalVariableNode(name, desc, null, new LabelNode(), new LabelNode(), 2);
-        methodNode.localVariables.add(node);
         push(startInsnList,1);
 
+//        final LocalVariableNode node = new LocalVariableNode(name, desc, null, new LabelNode(), new LabelNode(), 2);
+//        methodNode.localVariables.add(node);
+
         startInsnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(InterceptorFactory.class), "getInterceptor", "(I)" + Type.getDescriptor(Interceptor.class), false));
-        storeVar(startInsnList, 2);
 
-        startInsnList.add(new VarInsnNode(ALOAD, 2));
+        storeVar(startInsnList, 3);
 
+        startInsnList.add(new VarInsnNode(ALOAD, 3));
         startInsnList.add(new MethodInsnNode(INVOKEINTERFACE, INTERCEPTOR, "before", "()V", false));
         methodNode.instructions.insertBefore(nodes[0], startInsnList);
 

@@ -47,26 +47,11 @@ public class ASMMethod {
 
         // 生成的字节码写入目标文件中
         byte[] outputByteCode = cw.toByteArray();
-//        saveclass(outputByteCode);
+        Util.saveclass(outputByteCode);
         return outputByteCode;
     }
 
-    private static void saveclass(byte[] outputByteCode){
-        String dst="/Users/yinhao.zhang/soft/"+ "12345" +".class";
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(dst);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            fos.write(outputByteCode);
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-    }
 
     private ClassReader reader(byte[] classfileBuffer) {
         ClassReader cr = new ClassReader(classfileBuffer);
@@ -123,16 +108,21 @@ public class ASMMethod {
         String desc="Lcom/github/zhangyinhao1234/asm/Interceptor;";
 
 
-        final LocalVariableNode node = new LocalVariableNode(name, desc, null, new LabelNode(), new LabelNode(), 2);
-        methodNode.localVariables.add(node);
         push(startInsnList,1);
 
-        startInsnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(InterceptorFactory.class), "getInterceptor", "(I)" + Type.getDescriptor(Interceptor.class), false));
-        storeVar(startInsnList, 2);
+//        final LocalVariableNode node = new LocalVariableNode(name, desc, null, new LabelNode(), new LabelNode(), 2);
+//        methodNode.localVariables.add(node);
 
-        startInsnList.add(new VarInsnNode(ALOAD, 2));
+        startInsnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(InterceptorFactory.class), "getInterceptor", "(I)" + Type.getDescriptor(Interceptor.class), false));
+
+        storeVar(startInsnList, 3);
+
+        startInsnList.add(new VarInsnNode(ALOAD, 3));
         startInsnList.add(new MethodInsnNode(INVOKEINTERFACE, INTERCEPTOR, "before", "()V", false));
         methodNode.instructions.insertBefore(nodes[0], startInsnList);
+
+
+
     }
 
 
