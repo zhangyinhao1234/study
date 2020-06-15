@@ -2,8 +2,7 @@ package com.github.zhangyinhao1234.study.agent;
 
 import com.github.zhangyinhao1234.asm.ASMMethod;
 import com.github.zhangyinhao1234.javassist.JavassistMethod;
-import javassist.CannotCompileException;
-import javassist.NotFoundException;
+import javassist.*;
 
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -21,23 +20,27 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         // TODO Auto-generated method stub
 //        System.out.println("classname：-----------------:" + className);
-        if (!className.contains("HelloWord")) {
+        if (!className.contains("HelloTrans")) {
             return null;
         }
         System.out.println("加载"+className+"。。。的字节码增强");
 
-//        try {
-//            return new JavassistMethod().reloadClass();
-//        } catch (NotFoundException e) {
-//            e.printStackTrace();
-//        } catch (CannotCompileException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-        return new ASMMethod().reloadClass(classfileBuffer);
+        try {
+            return new JavassistMethod().reloadClass();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("return null");
+        return null;
+//        return new ASMMethod().reloadClass(classfileBuffer);
     }
+
+
+
 
 
 
