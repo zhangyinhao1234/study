@@ -1,6 +1,5 @@
 package com.github.zhangyinhao1234.study.observer;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 
 /**
  * @author 【张殷豪】
