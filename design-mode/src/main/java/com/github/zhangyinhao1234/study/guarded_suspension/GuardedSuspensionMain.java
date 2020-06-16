@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Guarded Suspension意为【保护暂停】，
+ * Guarded Suspension意为【保护性暂挂模式（Guarded Suspension Pattern）】，
  * 其核心思想是仅当服务进程准备好时，才提供服务。
  * 设想一种场景，服务器可能在很短时间内承受大量的客户请求，
  * 客户端请求的数量可能超过服务器本身的处理能力，而服务器又不能丢弃任何一个客户请求。
